@@ -1,0 +1,39 @@
+#include <iostream>
+#include <string>
+#include <algorithm>
+
+using namespace std;
+
+string encrypt_caesar(const string& text, int code) {
+    string result = "";
+    for (char c : text) {
+        if (isalpha(c)) {
+            bool isUpper = isupper(c);
+            char start = isUpper ? 'A' : 'a';
+            char shifted = char(((c - start + code) % 26 + 26) % 26 + start);
+            result += shifted;
+        } else if (isdigit(c)) {
+            result += to_string(((c - '0' + code) % 10 + 10) % 10);
+        }
+        else {
+            result += c;
+        }
+    }
+    return result;
+}
+
+int main() {
+    string text;
+    int code;
+
+    cout << "Введите текст: ";
+    getline(cin, text);
+
+    cout << "Введите код Цезаря: ";
+    cin >> code;
+
+    string encrypted_text = encrypt_caesar(text, code);
+    cout << "Зашифрованный текст: " << encrypted_text << endl;
+
+    return 0;
+}
