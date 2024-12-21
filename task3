@@ -1,0 +1,60 @@
+#include <iostream>
+#include <string>
+#include <sstream>
+
+using namespace std;
+
+
+string getOctet(const string& ip, int octetNumber) {
+    string octet = "";
+    int dotCount = 0;
+    for (char c : ip) {
+        if (c == '.') {
+            dotCount++;
+            if (dotCount == octetNumber) break;
+            continue;
+        }
+        if (dotCount == octetNumber -1) octet += c;
+    }
+    return octet;
+}
+
+bool isValidOctet(const string& octet) {
+    if (octet.empty()) return false;
+    if (octet.length() > 1 && octet[0] == '0') return false; // Проверка на ведущие нули
+    if (octet.length() > 3) return false; // Ограничение длины
+    for (char c : octet) {
+        if (!isdigit(c)) return false; // Проверка на цифры
+    }
+    int value = stoi(octet);
+    return value >= 0 && value <= 255;
+}
+
+
+bool isValidIp(const string& ip) {
+    int dotCount = 0;
+    for (char c : ip) {
+        if (c == '.') dotCount++;
+        else if (!isdigit(c)) return false; 
+    }
+
+    if (dotCount != 3) return false; 
+
+    string octet1 = getOctet(ip, 1);
+    string octet2 = getOctet(ip, 2);
+    string octet3 = getOctet(ip, 3);
+    string octet4 = getOctet(ip, 4);
+
+
+    if (ip.back() == '.') return false; 
+
+    return isValidOctet(octet1) && isValidOctet(octet2) && isValidOctet(octet3) && isValidOctet(octet4);
+}
+
+int main() {
+    string ip;
+    cin >> ip;
+    cout << (isValidIp(ip) ? "Valid" : "Invalid") << endl;
+    return 0;
+}
+
