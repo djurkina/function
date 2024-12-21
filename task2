@@ -1,0 +1,104 @@
+#include <iostream>
+#include <string>
+#include <algorithm>
+
+using namespace std;
+
+string getFirstPart(const string& email) {
+    string firstPart = "";
+    bool atFound = false;
+    for (char c : email) {
+        if (c == '@') {
+            atFound = true;
+            break;
+        }
+        firstPart += c;
+    }
+    return atFound ? firstPart : "";
+}
+
+
+string getSecondPart(const string& email) {
+    string secondPart = "";
+    bool atFound = false;
+    for (char c : email) {
+        if (c == '@') {
+            atFound = true;
+            continue;
+        }
+        if (atFound) {
+            secondPart += c;
+        }
+    }
+    return atFound ? secondPart : "";
+}
+
+
+bool isValidFirstPartChar(char c) {
+    return (isalnum(c) || c == '-' || c == '.' ||
+            c == '!' || c == '#' || c == '$' || c == '%' || c == '&' ||
+            c == '\'' || c == '*' || c == '+' || c == '/' || c == '=' ||
+            c == '?' || c == '^' || c == '_' || c == '`' || c == '{' ||
+            c == '|' || c == '}' || c == '~');
+}
+
+
+bool isValidSecondPartChar(char c) {
+    return (isalnum(c) || c == '-' || c == '.');
+}
+
+
+
+bool isValidEmail(const string& email) {
+    size_t atPos = email.find('@');
+
+    if (atPos == string::npos || atPos == 0 || atPos == email.length() - 1) return false;
+
+    string firstPart = getFirstPart(email);
+    string secondPart = getSecondPart(email);
+
+
+    if (firstPart.length() < 1 || firstPart.length() > 64 ||
+        secondPart.length() < 1 || secondPart.length() > 63) return false;
+
+ 
+    bool firstPartValid = true;
+    if (firstPart[0] == '.' || firstPart.back() == '.') firstPartValid = false;
+    for (size_t i = 0; i < firstPart.length(); ++i) {
+        if (!isValidFirstPartChar(firstPart[i])) {
+            firstPartValid = false;
+            break;
+        }
+        if (firstPart[i] == '.' && (i > 0 && firstPart[i-1] == '.' || i < firstPart.length() -1 && firstPart[i+1] == '.')) {
+            firstPartValid = false;
+            break;
+        }
+    }
+    if (!firstPartValid) return false;
+
+
+    bool secondPartValid = true;
+    for (size_t i = 0; i < secondPart.length(); ++i) {
+        if (!isValidSecondPartChar(secondPart[i])) {
+            secondPartValid = false;
+            break;
+        }
+        if (secondPart[i] == '.' && (i > 0 && secondPart[i-1] == '.' || i < secondPart.length() -1 && secondPart[i+1] == '.')) {
+            secondPartValid = false;
+            break;
+        }
+
+    }
+    if (!secondPartValid) return false;
+
+
+    return true;
+}
+
+int main() {
+    string email;
+    cin >> email;
+    cout << (isValidEmail(email) ? "Yes" : "No") << endl;
+    return 0;
+}
+
